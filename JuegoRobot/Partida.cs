@@ -8,8 +8,8 @@ namespace JuegoRobot
 {
     public class Partida
     {
-        Robot robot;
-        Escenario escenario;
+        public Robot robot;
+        public Escenario escenario;
         public int puntos;
 
         public Partida(Robot robot, Escenario escenario)

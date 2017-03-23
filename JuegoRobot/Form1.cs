@@ -29,6 +29,9 @@ namespace JuegoRobot
             poblacion = new List<Robot>();
 
             diccionario = new Dictionary<Robot, int>();
+
+            int[] recorrido = new int[10]{1,1,2,3,4,5,6,1,1,7};
+            esc = new Escenario(recorrido);
                        
 
                   }
@@ -64,7 +67,24 @@ namespace JuegoRobot
 
             Random rand = new Random();
 
-            if (rand.Next(0, 100) < 50) ;
+            if (mutacionparcial.Checked.Equals(true))
+            {
+
+                if (rand.Next(0, 100) < 50)
+                {
+                    int posicion = rand.Next(0, 6);
+                    System.Threading.Thread.Sleep(1);
+                    int valor = rand.Next(1, 8);
+
+                    hijo1.adn[posicion] = valor;
+                    hijo2.adn[posicion] = valor;
+
+                    //Si se da la mutacion hay que reflejarla
+                    numerodemutaciones++;
+
+                }
+            }
+            else
             {
                 int posicion = rand.Next(0, 6);
                 System.Threading.Thread.Sleep(1);
@@ -74,8 +94,7 @@ namespace JuegoRobot
                 hijo2.adn[posicion] = valor;
 
                 //Si se da la mutacion hay que reflejarla
-                numerodemutaciones ++;
-
+                numerodemutaciones++;
             }
 
             robots.Add(hijo1);
@@ -128,21 +147,30 @@ namespace JuegoRobot
 
         private void botonEmpezar_Click(object sender, EventArgs e)
         {
+            poblacion.Clear();
+            generacion1.Items.Clear();
+            diccionario.Clear();
+            diccionario1.Items.Clear();
+            listageneracion2.Items.Clear();
+            listaGX.Items.Clear();
+            generacionX.Items.Clear();
+            numerodemutaciones = 0;
+            numerodegeneraciones = 0;
 
-            //this.tamrecorrido = Int32.Parse(txtRecorrido.Text);
+
+           
             this.numeropoblacion = Int32.Parse(txtPI.Text);
             this.evaluacion = Int32.Parse(txtEvaluacion.Text);
+
             CrearPoblacion(numeropoblacion);
 
             foreach (Robot v in poblacion)
             {
 
-                generacion1.Items.Add(v.ToString());
+                generacion1.Items.Add(v);
             }
 
-            int[] recorrido = new int[10] { 1, 1, 2, 3, 4, 5, 6, 1, 1, 7 };
-
-            esc = new Escenario(recorrido);
+            //GenerarRecorrido();
 
             foreach (Robot v in poblacion)
             {
@@ -174,7 +202,7 @@ namespace JuegoRobot
             foreach (Robot r in generacion2)
             {
                 listageneracion2.Items.Add(r.ToString());
-                txtMutaciones.Text = numerodemutaciones.ToString();
+                
             }
 
 
@@ -228,11 +256,114 @@ namespace JuegoRobot
             int index = 0;
             foreach (var r in top)
             {
+                listaGX.Items.Add(r.Key);
                 generacionX.Items.Add("Sujeto" + index + ": " + r.Key.ToString() + "-----> " + r.Value.ToString());
                 index++;
             }
             numberGenerations.Text = numerodegeneraciones.ToString();
+            txtMutaciones.Text = numerodemutaciones.ToString();
 
+
+        }
+
+        private void generacion1_KeyPress(object sender, KeyPressEventArgs e)
+        {
+
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            GenerarRecorrido();
+
+
+
+        }
+
+        private void GenerarRecorrido()
+        {
+            int[] recorrido = new int[10];
+            Random rand = new Random();
+            for (int i = 0; i < recorrido.Length; i++)
+            {
+
+                recorrido[i] = rand.Next(1, 8);
+                System.Threading.Thread.Sleep(2);
+            }
+
+            esc = new Escenario(recorrido);
+
+            RE1.Text = esc.recorrido[0].ToString();
+            RE2.Text = esc.recorrido[1].ToString();
+            RE3.Text = esc.recorrido[2].ToString();
+            RE4.Text = esc.recorrido[3].ToString();
+            RE5.Text = esc.recorrido[4].ToString();
+            RE6.Text = esc.recorrido[5].ToString();
+            RE7.Text = esc.recorrido[6].ToString();
+            RE8.Text = esc.recorrido[7].ToString();
+            RE9.Text = esc.recorrido[8].ToString();
+            RE10.Text = esc.recorrido[9].ToString();
+        }
+
+        private void generacion1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            Robot robot = (Robot)generacion1.SelectedItem;
+
+            RG1.Text = robot.adn[0].ToString();
+            RG2.Text = robot.adn[1].ToString();
+            RG3.Text = robot.adn[2].ToString();
+            RG4.Text = robot.adn[3].ToString();
+            RG5.Text = robot.adn[4].ToString();
+            RG6.Text = robot.adn[5].ToString();
+            RG7.Text = robot.adn[6].ToString();
+
+            Partida nueva = new Partida(robot, esc);
+            textpuntos.Text = nueva.puntos.ToString();
+
+
+            SimularRobotEscenario(robot);
+        }
+
+        private void SimularRobotEscenario(Robot robot)
+        {
+            for(int i=1; i < 11; i++)
+            {
+                string nombre = "RE" + i;
+                var matches = this.Controls.Find(nombre, true).First();
+                for (int j = 1; j < 8; j++)
+                {
+                    if (matches.Text.Equals(j.ToString()))
+                    {
+                        if (robot.adn[j-1].Equals(j))
+                        {
+                            matches.BackColor = System.Drawing.Color.Green;
+                        }
+                        else matches.BackColor = System.Drawing.Color.Red;
+
+                    }
+                }
+                
+             
+
+
+
+            }
+        }
+
+        private void listaGX_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            Robot robot = (Robot)listaGX.SelectedItem;
+            RG1.Text = robot.adn[0].ToString();
+            RG2.Text = robot.adn[1].ToString();
+            RG3.Text = robot.adn[2].ToString();
+            RG4.Text = robot.adn[3].ToString();
+            RG5.Text = robot.adn[4].ToString();
+            RG6.Text = robot.adn[5].ToString();
+            RG7.Text = robot.adn[6].ToString();
+            Partida nueva = new Partida(robot, esc);
+            textpuntos.Text = nueva.puntos.ToString();
+
+
+            SimularRobotEscenario(robot);
 
         }
     }
