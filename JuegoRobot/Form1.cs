@@ -333,17 +333,22 @@ namespace JuegoRobot
                 {
                     if (matches.Text.Equals(j.ToString()))
                     {
-                        if (robot.adn[j-1].Equals(j))
+                        if (robot.adn[j - 1].Equals(j))
                         {
+                            
                             matches.BackColor = System.Drawing.Color.Green;
                         }
-                        else matches.BackColor = System.Drawing.Color.Red;
+                        else
+                        {
+                            matches.BackColor = System.Drawing.Color.Red;
+                            
+                        }
 
-                    }
+                        }
                 }
-                
-             
 
+
+               
 
 
             }
